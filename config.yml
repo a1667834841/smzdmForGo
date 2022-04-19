@@ -1,0 +1,12 @@
+# 最低评论数
+lowCommentNum: 10 
+# 最低值率
+lowWorthyNum: 80
+# 满意商品数量
+satisfyNum: 10
+# 过滤词
+filterWords: 
+- "榴莲"
+- "唯品会"
+- "牛奶"
+- "电脑"
