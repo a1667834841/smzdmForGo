@@ -10,6 +10,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"ggball.com/smzdm/file"
 )
 
 type result struct {
@@ -39,16 +41,24 @@ type Config struct {
 	LowCommentNum int      `yaml:"lowCommentNum"`
 	LowWorthyNum  int      `yaml:"lowWorthyNum"`
 	SatisfyNum    int      `yaml:"satisfyNum"`
+	TickTime      int      `yaml:"tickTime"`
 	FilterWords   []string `yaml:"filterWords"`
 }
 
+// 全局配置
 var globalConf = Config{}
+
+// 推送信息文件地址
+var pushedPath = "./pushed.json"
 
 // 获取值率大于80&且评论量大于10的商品
 //  @return []product
 func GetSatisfiedGoods(conf Config) []Product {
 	globalConf = conf
 	fmt.Println("开始爬取符合条件商品。。")
+
+	// 获取已推送文章id
+	pushedMap := file.ReadPusedInfo(pushedPath)
 
 	// 符合条件的商品集合
 	var satisfyGoodsList []Product
@@ -66,14 +76,22 @@ func GetSatisfiedGoods(conf Config) []Product {
 				good := rows[i]
 
 				// 过滤规则
-				// 文章名称 包含特殊字符 一概不要
 				var noNeed = false
+				// 文章名称 包含特殊字符 一概不要
 				for j := 0; j < len(conf.FilterWords); j++ {
 					if strings.Contains(good.ArticleTitle, conf.FilterWords[j]) {
 						noNeed = true
 						break
 					}
 				}
+
+				// 根据已推送文章id map 判断是否需要去除，如果已经推送过的，则去除
+				_, b := pushedMap[good.ArticleId]
+				if b {
+					// fmt.Println(good.ArticleTitle + "文章已存在,不予添加")
+					noNeed = true
+				}
+
 				if noNeed {
 					continue
 				}
@@ -118,6 +136,14 @@ func GetSatisfiedGoods(conf Config) []Product {
 
 	fmt.Println("结束爬取符合条件商品。。")
 
+	// 保存推送商品，去重使用
+	tempMap := make(map[string]interface{})
+
+	for index, value := range satisfyGoodsList {
+		tempMap[value.ArticleId] = index
+	}
+	file.WritePushedInfo(tempMap, pushedMap, pushedPath)
+
 	return satisfyGoodsList
 }
 
@@ -158,11 +184,6 @@ func GetGoods(page int) result {
 // 根据条件 判断是否应该停止爬取
 func shouldStop(length int, date string) bool {
 
-	// 判断数量是否超过【符合商品个数】
-	if length > globalConf.SatisfyNum {
-		return true
-	}
-
 	// 判断文章日期是否超过昨天，超过昨天则退出
 	nTime := time.Now()
 	yesTime := nTime.AddDate(0, 0, -1)
@@ -172,7 +193,8 @@ func shouldStop(length int, date string) bool {
 		panic(err1)
 	}
 
-	if err1 == nil && arDate.Before(yesTime) {
+	// 判断文章日期是否超过昨天，超过昨天则退出 且 判断数量是否超过【符合商品个数】
+	if (err1 == nil && arDate.Before(yesTime)) && length > globalConf.SatisfyNum {
 		return true
 	}
 

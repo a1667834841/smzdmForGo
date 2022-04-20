@@ -5,17 +5,26 @@ import (
 	"log"
 	"os"
 
+	"ggball.com/smzdm/cron"
 	"ggball.com/smzdm/push"
 	"ggball.com/smzdm/smzdm"
 	"github.com/spf13/viper"
 )
 
-func main() {
+// 读取配置文件
+var conf = readConf()
 
-	// 读取配置文件
-	conf := readConf()
+func main() {
+	// 定时任务开启
+	tick := cron.NewMyTick(conf.TickTime, requestSmzdm)
+	tick.Start()
+
+}
+
+func requestSmzdm() {
 	// 搜索商品
 	products := smzdm.GetSatisfiedGoods(conf)
+	// 推送商品
 	pushDingDing(products)
 }
 
