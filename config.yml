@@ -1,7 +1,10 @@
+# 搜索关键词
+keyWord: "信小兔"
+
 # 最低评论数
-lowCommentNum: 10 
+lowCommentNum: 0
 # 最低值率
-lowWorthyNum: 80
+lowWorthyNum: 0
 # 满意商品数量
 satisfyNum: 10
 # 过滤词
@@ -11,5 +14,7 @@ filterWords:
 - "牛奶"
 - "电脑"
 
-# 定时任务多长执行一次 单位秒 默认 12个小时 43200
-tickTime: 12
+# 定时任务多长执行一次 单位秒 默认 12个小时
+tickTime: 43200
+# 钉钉token
+dingdingToken: "106aef404757b5a5c7df598663a9590f7ad67a4edd82ed255faee5dbc986776a"

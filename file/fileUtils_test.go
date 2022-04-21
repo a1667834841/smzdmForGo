@@ -24,3 +24,7 @@ func TestWritePushed(t *testing.T) {
 
 	WritePushedInfo(pushedMap, readPusedInfo, "../pushed.json")
 }
+
+func TestInputConfig(t *testing.T) {
+
+}

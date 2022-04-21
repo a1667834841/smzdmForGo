@@ -31,29 +31,21 @@ type Product struct {
 	ArticleWorthy  string `json:"article_worthy"`
 	ArticleComment string `json:"article_comment"`
 	ArticleId      string `json:"article_id"`
-	ArticleDate    string `json:"article_date"`
+	ArticleDate    string `json:"publish_date_lt"`
 	ArticlePic     string `json:"article_pic"`
 	ArticleUrl     string `json:"article_url"`
-}
-
-// 配置文件
-type Config struct {
-	LowCommentNum int      `yaml:"lowCommentNum"`
-	LowWorthyNum  int      `yaml:"lowWorthyNum"`
-	SatisfyNum    int      `yaml:"satisfyNum"`
-	TickTime      int      `yaml:"tickTime"`
-	FilterWords   []string `yaml:"filterWords"`
+	Referral       string `json:"article_referrals"`
 }
 
 // 全局配置
-var globalConf = Config{}
+var globalConf = file.Config{}
 
 // 推送信息文件地址
 var pushedPath = "./pushed.json"
 
-// 获取值率大于80&且评论量大于10的商品
+// 获取商品
 //  @return []product
-func GetSatisfiedGoods(conf Config) []Product {
+func GetSatisfiedGoods(conf file.Config) []Product {
 	globalConf = conf
 	fmt.Println("开始爬取符合条件商品。。")
 
@@ -75,56 +67,29 @@ func GetSatisfiedGoods(conf Config) []Product {
 			for i := 0; i < len(rows); i++ {
 				good := rows[i]
 
-				// 过滤规则
-				var noNeed = false
-				// 文章名称 包含特殊字符 一概不要
-				for j := 0; j < len(conf.FilterWords); j++ {
-					if strings.Contains(good.ArticleTitle, conf.FilterWords[j]) {
-						noNeed = true
-						break
-					}
+				// 商品 包含 “k” 转换数字 默认给1000
+				if strings.Contains(strings.ToLower(good.ArticleComment), "k") {
+					good.ArticleComment = "1000"
 				}
 
-				// 根据已推送文章id map 判断是否需要去除，如果已经推送过的，则去除
-				_, b := pushedMap[good.ArticleId]
-				if b {
-					// fmt.Println(good.ArticleTitle + "文章已存在,不予添加")
-					noNeed = true
-				}
-
-				if noNeed {
+				if removeByFilterRules(good, pushedMap) {
 					continue
 				}
 
-				// 商品 包含 “k” 直接添加
-				if strings.Contains(strings.ToLower(good.ArticleComment), "k") || strings.Contains(strings.ToLower(good.ArticleWorthy), "k") {
-					fmt.Printf("appear satisfy good: %#v", good)
-					satisfyGoodsList = append(satisfyGoodsList, good)
-					continue
-				}
-
-				// 评论 和 值率 转int
-				articleComment, err1 := strconv.Atoi(good.ArticleComment)
-				articleWorthy, err2 := strconv.Atoi(good.ArticleWorthy)
-				if err1 != nil || err2 != nil {
-					fmt.Println("goods:", good)
-					panic(err1)
-				}
-
-				// 评论，值率满足要求 则添加商品
-				if articleComment >= conf.LowCommentNum && articleWorthy >= conf.LowWorthyNum {
-					fmt.Printf("appear satisfy good: %#v", good)
-					// fmt.Println("appear satisfy good:", good)
+				if satisfy(good, satisfyGoodsList) {
 					satisfyGoodsList = append(satisfyGoodsList, good)
 				}
+
 			}
 		}
 
 		// 页数+1
 		page++
+		// 延时2s
+		time.Sleep(time.Duration(2) * time.Second)
 
 		// 判断是否退出
-		if len(satisfyGoodsList) > 0 && shouldStop(len(satisfyGoodsList), satisfyGoodsList[len(satisfyGoodsList)-1].ArticleDate) {
+		if len(satisfyGoodsList) > 0 && shouldStop(len(satisfyGoodsList), page) {
 			break
 		}
 	}
@@ -137,12 +102,7 @@ func GetSatisfiedGoods(conf Config) []Product {
 	fmt.Println("结束爬取符合条件商品。。")
 
 	// 保存推送商品，去重使用
-	tempMap := make(map[string]interface{})
-
-	for index, value := range satisfyGoodsList {
-		tempMap[value.ArticleId] = index
-	}
-	file.WritePushedInfo(tempMap, pushedMap, pushedPath)
+	savePushed(pushedMap, pushedPath, satisfyGoodsList)
 
 	return satisfyGoodsList
 }
@@ -155,18 +115,19 @@ func GetGoods(page int) result {
 	var res result
 
 	params := url.Values{}
-	Url, err := url.Parse("https://api.smzdm.com/v1/home/articles_new")
+	Url, err := url.Parse("https://api.smzdm.com/v1/list")
 	if err != nil {
 		return res
 	}
-	params.Set("f", "wxapp")
-	params.Set("wxapp", "wxapp")
+	params.Set("keyword", globalConf.KeyWord)
+	params.Set("order", "score")
+	params.Set("type", "good_price")
 	params.Set("offset", strconv.Itoa(page*20))
 	params.Set("limit", "20")
 
 	Url.RawQuery = params.Encode()
 	urlPath := Url.String()
-	// fmt.Println(urlPath) //
+	fmt.Println(urlPath)
 	resp, err := http.Get(urlPath)
 	if err != nil {
 		return res
@@ -182,22 +143,83 @@ func GetGoods(page int) result {
 }
 
 // 根据条件 判断是否应该停止爬取
-func shouldStop(length int, date string) bool {
+func shouldStop(length int, page int) bool {
+	fmt.Println("length" + strconv.Itoa(length) + "page" + strconv.Itoa(page))
+	//  判断数量是否超过【符合商品个数】 且 page > 200
+	return length > globalConf.SatisfyNum || page > 200
 
-	// 判断文章日期是否超过昨天，超过昨天则退出
+}
+
+// 根据过滤规则，去除商品
+func removeByFilterRules(good Product, pushedMap map[string]interface{}) bool {
+	var noNeed = false
+	// 1. 文章名称 包含过滤字符 一概不要
+	for j := 0; j < len(globalConf.FilterWords); j++ {
+		if strings.Contains(good.ArticleTitle, globalConf.FilterWords[j]) {
+			noNeed = true
+			break
+		}
+	}
+
+	// 2. 根据已推送文章id map 判断是否需要去除，如果已经推送过的，则去除
+	_, b := pushedMap[good.ArticleId]
+	if b {
+		// fmt.Println(good.ArticleTitle + "文章已存在,不予添加")
+		noNeed = true
+	}
+
+	// 3. 文章时间小于昨天 去除
+	// var timeLayoutStr = "2006-01-02 15:04:05" //go中的时间格式化必须是这个时间
 	nTime := time.Now()
-	yesTime := nTime.AddDate(0, 0, -1)
-	arDate, err1 := time.Parse("2006-01-02 15:04:05", date)
+	// 前天
+	beforeYesDate := nTime.AddDate(0, 0, -2)
+	dateInt64, err1 := strconv.ParseInt(good.ArticleDate, 10, 64)
 
 	if err1 != nil {
 		panic(err1)
 	}
 
-	// 判断文章日期是否超过昨天，超过昨天则退出 且 判断数量是否超过【符合商品个数】
-	if (err1 == nil && arDate.Before(yesTime)) && length > globalConf.SatisfyNum {
+	arDate := time.Unix(dateInt64, 0)
+	// fmt.Println("文章时间：" + arDate.Format(timeLayoutStr) + "昨天时间：" + beforeYesDate.Format(timeLayoutStr))
+	if arDate.Before(beforeYesDate) {
+		noNeed = true
+	}
+
+	return noNeed
+}
+
+// 根据规则判断符合规则的商品
+func satisfy(good Product, satisfyGoodsList []Product) bool {
+
+	// 文章名称,爆料人包含关键词 直接添加
+	// if strings.Contains(good.ArticleTitle, globalConf.KeyWord) || strings.Contains(good.Referral, globalConf.KeyWord) {
+	// 	// fmt.Printf("appear satisfy good: %#v", good)
+	// 	return true
+	// }
+
+	// 评论 和 值率 转int
+	articleComment, err1 := strconv.Atoi(good.ArticleComment)
+	articleWorthy, err2 := strconv.Atoi(good.ArticleWorthy)
+	if err1 != nil || err2 != nil {
+		fmt.Println("goods:", good)
+		panic(err1)
+	}
+
+	// 评论，值率满足要求 则添加商品
+	if articleComment >= globalConf.LowCommentNum && articleWorthy >= globalConf.LowWorthyNum {
+		// fmt.Printf("appear satisfy good: %#v", good)
 		return true
 	}
 
 	return false
+}
 
+// 保存推送商品，去重使用
+func savePushed(pushedMap map[string]interface{}, pushedPath string, satisfyGoodsList []Product) {
+	tempMap := make(map[string]interface{})
+
+	for index, value := range satisfyGoodsList {
+		tempMap[value.ArticleId] = index
+	}
+	file.WritePushedInfo(tempMap, pushedMap, pushedPath)
 }

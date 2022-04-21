@@ -8,6 +8,9 @@ import (
 	"net/http"
 	"net/url"
 	"unsafe"
+
+	"ggball.com/smzdm/file"
+	"ggball.com/smzdm/smzdm"
 )
 
 // 定义推送者，声明推送方法
@@ -44,4 +47,34 @@ func (pusher DingPusher) Push(params DingParam) {
 	str := (*string)(unsafe.Pointer(&content)) //转化为string,优化内存
 	fmt.Println(*str)
 
+}
+
+// 推送钉钉
+func PushDingDing(pro []smzdm.Product, conf file.Config) {
+	dingPusher := DingPusher{
+		Token: conf.DingdingToken,
+	}
+
+	// 需要提前申明数组的容量
+	links := make([]Link, len(pro))
+
+	for index, item := range pro {
+		link := Link{
+			Title:      item.ArticlePrice + "!【" + item.ArticleTitle + "】" + "【什么值得买】" + "\n\r",
+			MessageURL: item.ArticleUrl,
+			PicURL:     item.ArticlePic,
+		}
+		links[index] = link
+	}
+
+	feedCard := FeedCard{
+		Links: links,
+	}
+
+	params := DingParam{
+		MsgType:  "feedCard",
+		FeedCard: feedCard,
+	}
+
+	dingPusher.Push(params)
 }
