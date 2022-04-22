@@ -15,4 +15,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v1 # 作用：检出仓库，获取源码。
+      - name: build
+        uses: actions/setup-go@v3
+        with:
+          go-version: '^3.0.0'
+      - go version
 
