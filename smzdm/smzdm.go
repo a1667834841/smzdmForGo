@@ -97,7 +97,7 @@ func GetSatisfiedGoods(conf file.Config) []Product {
 		time.Sleep(time.Duration(2) * time.Second)
 
 		// 判断是否退出
-		if len(satisfyGoodsList) > 0 && shouldStop(len(satisfyGoodsList), page) {
+		if shouldStop(len(satisfyGoodsList), page) || len(satisfyGoodsList) > 0 {
 			break
 		}
 	}
@@ -135,7 +135,7 @@ func GetGoods(page int, keword string) result {
 
 	Url.RawQuery = params.Encode()
 	urlPath := Url.String()
-	// fmt.Println(urlPath)
+	fmt.Println(urlPath)
 	resp, err := http.Get(urlPath)
 	if err != nil {
 		return res
@@ -152,7 +152,7 @@ func GetGoods(page int, keword string) result {
 
 // 根据条件 判断是否应该停止爬取
 func shouldStop(length int, page int) bool {
-	// fmt.Println("length" + strconv.Itoa(length) + "page" + strconv.Itoa(page))
+	fmt.Println("length:" + strconv.Itoa(length) + "\n\r page:" + strconv.Itoa(page))
 	//  判断数量是否超过【符合商品个数】 且 page > 20
 	return length > globalConf.SatisfyNum || page > 20
 
