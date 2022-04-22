@@ -1,0 +1,18 @@
+name: ci
+
+on:
+  push:
+    branches:
+      - master
+
+env: # 设置环境变量
+  TZ: Asia/Shanghai # 时区（设置时区可使页面中的`最近更新时间`使用时区时间）
+
+jobs: 
+  build:
+    runs-on: ubuntu-latest # 运行在虚拟机环境ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1 # 作用：检出仓库，获取源码。
+
