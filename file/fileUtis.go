@@ -20,7 +20,7 @@ type Config struct {
 	SatisfyNum    int      `yaml:"satisfyNum"`
 	TickTime      int      `yaml:"tickTime"`
 	FilterWords   []string `yaml:"filterWords"`
-	KeyWord       string   `yaml:"keyWord"`
+	KeyWords      []string `yaml:"keyWords"`
 	DingdingToken string   `yaml:"dingdingToken"`
 }
 
@@ -108,24 +108,18 @@ func InputCmd() {
 // 读取配置文件
 func ReadConf() Config {
 
-	// wd, err := os.Getwd()
-	// if err != nil {
-	// 	panic(err)
-	// }
+	wd, err := os.Getwd()
+	if err != nil {
+		panic(err)
+	}
 	cnf := Config{}
 	c := &cnf
 	v := viper.New()
-	// v.SetConfigName("config") //这里就是上面我们配置的文件名称，不需要带后缀名
-	// v.AddConfigPath(wd)       //文件所在的目录路径
-	// v.SetConfigType("yml")    //这里是文件格式类型
+	v.SetConfigName("config") //这里就是上面我们配置的文件名称，不需要带后缀名
+	v.AddConfigPath(wd)       //文件所在的目录路径
+	v.SetConfigType("yml")    //这里是文件格式类型
 
-	file, _ := exec.LookPath(os.Args[0])
-	path, _ := filepath.Abs(file)
-	index := strings.LastIndex(path, string(os.PathSeparator))
-	path = path[:index]
-
-	v.SetConfigFile(path + "\\config.yml")
-	err := v.ReadInConfig()
+	err = v.ReadInConfig()
 	if err != nil {
 		log.Fatal("读取配置文件失败：", err)
 		return cnf

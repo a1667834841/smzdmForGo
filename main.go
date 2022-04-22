@@ -28,7 +28,7 @@ func requestSmzdm() {
 
 func init() {
 	// 写入命令行
-	file.InputCmd()
+	// file.InputCmd()
 	// 读取配置文件
 	conf = file.ReadConf()
 }

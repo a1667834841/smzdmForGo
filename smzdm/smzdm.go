@@ -17,10 +17,10 @@ import (
 type result struct {
 	ErrorCode string `json:"error_code"`
 	ErrorMsg  string `json:"error_msg"`
-	Data      data   `json:"data"`
+	Data      Data   `json:"data"`
 }
 
-type data struct {
+type Data struct {
 	Rows  []Product `json:"rows"`
 	Total int       `json:"total"`
 }
@@ -58,12 +58,20 @@ func GetSatisfiedGoods(conf file.Config) []Product {
 	page := 0
 	for {
 
-		// Get the good list
-		goods := GetGoods(page)
+		var productList = []Product{}
+		if len(globalConf.KeyWords) > 0 {
+			for _, word := range globalConf.KeyWords {
+				products := GetGoods(page, word).Data.Rows
+				productList = append(productList, products...)
+			}
+		} else {
+			// Get the good list
+			productList = GetGoods(page, "").Data.Rows
+		}
 
 		// add satisfy good
-		if len(goods.Data.Rows) > 0 {
-			rows := goods.Data.Rows
+		if len(productList) > 0 {
+			rows := productList
 			for i := 0; i < len(rows); i++ {
 				good := rows[i]
 
@@ -110,7 +118,7 @@ func GetSatisfiedGoods(conf file.Config) []Product {
 // GetGoods 获取商品集合
 //  @param offset
 //  @return result 商品集合
-func GetGoods(page int) result {
+func GetGoods(page int, keword string) result {
 
 	var res result
 
@@ -119,15 +127,15 @@ func GetGoods(page int) result {
 	if err != nil {
 		return res
 	}
-	params.Set("keyword", globalConf.KeyWord)
+	params.Set("keyword", keword)
 	params.Set("order", "score")
 	params.Set("type", "good_price")
 	params.Set("offset", strconv.Itoa(page*20))
-	params.Set("limit", "20")
+	params.Set("limit", "50")
 
 	Url.RawQuery = params.Encode()
 	urlPath := Url.String()
-	fmt.Println(urlPath)
+	// fmt.Println(urlPath)
 	resp, err := http.Get(urlPath)
 	if err != nil {
 		return res
@@ -144,9 +152,9 @@ func GetGoods(page int) result {
 
 // 根据条件 判断是否应该停止爬取
 func shouldStop(length int, page int) bool {
-	fmt.Println("length" + strconv.Itoa(length) + "page" + strconv.Itoa(page))
-	//  判断数量是否超过【符合商品个数】 且 page > 200
-	return length > globalConf.SatisfyNum || page > 200
+	// fmt.Println("length" + strconv.Itoa(length) + "page" + strconv.Itoa(page))
+	//  判断数量是否超过【符合商品个数】 且 page > 20
+	return length > globalConf.SatisfyNum || page > 20
 
 }
 
@@ -155,7 +163,7 @@ func removeByFilterRules(good Product, pushedMap map[string]interface{}) bool {
 	var noNeed = false
 	// 1. 文章名称 包含过滤字符 一概不要
 	for j := 0; j < len(globalConf.FilterWords); j++ {
-		if strings.Contains(good.ArticleTitle, globalConf.FilterWords[j]) {
+		if strings.Contains(good.ArticleTitle, globalConf.FilterWords[j]) || strings.Contains(good.ArticlePrice, globalConf.FilterWords[j]) {
 			noNeed = true
 			break
 		}
