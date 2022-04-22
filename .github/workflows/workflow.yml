@@ -16,8 +16,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v1 # 作用：检出仓库，获取源码。
       - name: set-go-environment
-        uses: actions/setup-go@v3
+        uses: actions/setup-go@v3 # uses 和 run 不能同时在一个step使用
         with:
-          go-version: '^3.0.0'
+          go-version: '1.13.1'
       - run: go version
 
