@@ -19,5 +19,5 @@ jobs:
         uses: actions/setup-go@v3
         with:
           go-version: '^3.0.0'
-        run: go version
+      - run: go version
 
