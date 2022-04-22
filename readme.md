@@ -22,13 +22,6 @@
 ### 使用步骤
 下载整个代码 window平台直接运行`smzdm.exe`，切勿挪动exe文件，会导致读不到配置
 如果想用关键字或者推送自己的钉钉，可以修改配置信息
-**命令式：**
-```go 
-// 查询含关键词商品
-./smzdm.exe --keyword=关键字 --dingdingToken=xx
-// 推送指定钉钉群
-./smzdm.exe --dingdingToken=xx
-```
 **配置式：**
 修改以下配置，保存配置，再运行`smzdm.exe`即可
 ```yml
