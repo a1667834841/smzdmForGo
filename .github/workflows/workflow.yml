@@ -19,5 +19,8 @@ jobs:
         uses: actions/setup-go@v3 # uses 和 run 不能同时在一个step使用
         with:
           go-version: '1.13.1'
-      - run: go version
+      - name: build-app
+        run: go build -o smzdmPusher
+      - name: depoly
+        run: echo depoly !
 
