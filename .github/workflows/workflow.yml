@@ -22,6 +22,7 @@ jobs:
       - name: build-app
         run: go build -o smzdmPusher
       - name: depoly
+        uses: ../actions/cd
         with:
         # 这里是 rsync 的参数 switches: -avzh --delete --exclude="" --include="" --filter=""
         switches: -avzh
