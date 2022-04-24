@@ -1,0 +1,45 @@
+name: 'Rsync Deployments Action'
+description: 'GitHub Action for deploying code via rsync over ssh'
+author: 'Burnett01'
+inputs:
+  switches:
+    description: 'The switches'
+    required: true
+  rsh:
+    description: 'The remote shell argument'
+    required: false
+    default: ''
+  path:
+    description: 'The local path'
+    required: false
+    default: ''
+  remote_path:
+    description: 'The remote path'
+    required: true
+  remote_host:
+    description: 'The remote host'
+    required: true
+  remote_port:
+    description: 'The remote port'
+    required: false
+    default: 22
+  remote_user:
+    description: 'The remote user'
+    required: true
+  remote_key:
+    description: 'The remote key'
+    required: true
+  remote_key_pass:
+    description: 'The remote key passphrase'
+    required: false
+    default: ''
+  cmd:
+    description: 'The remote cmd'
+    required: false
+    default: ''
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+branding:
+  icon: 'send'  
+  color: 'gray-dark'

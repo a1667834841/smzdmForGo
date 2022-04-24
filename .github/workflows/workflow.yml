@@ -22,5 +22,14 @@ jobs:
       - name: build-app
         run: go build -o smzdmPusher
       - name: depoly
-        run: echo depoly !
+        with:
+        # 这里是 rsync 的参数 switches: -avzh --delete --exclude="" --include="" --filter=""
+        switches: -avzh
+        path: smzdmPusher
+        remote_path: /opt/go/smzdmForGo
+        remote_host: 1.15.141.114
+        remote_port: 22
+        remote_user: root
+        remote_key: ${{ secrets.SSH_PRIVATE_KEY }}
+        cmd:  /opt/go/smzdmForGo/smzdm.sh stop && /opt/go/smzdmForGo/smzdm.sh start
 
