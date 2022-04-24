@@ -1,7 +1,7 @@
 #!/bin/bash
 d=`date "+%y-%m/%d %H:%M:%S"`
 #echo "$1$d"
-
+source /etc/profile
 if [ $1 = "start" ]; then
 echo "$d pusher is starting.... "
         nohup ./smzdmPusher >> ./smzdm.log 2>&1 &
