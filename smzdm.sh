@@ -6,7 +6,8 @@ depolyPath="/opt/go/smzdmForGo"
 
 if [ $1 = "start" ]; then
 echo "$d pusher is starting.... "
-<<EOF source /etc/profile;
+<<EOF 
+source /etc/profile
 nohup ${depolyPath}/smzdmPusher >> ${depolyPath}/smzdm.log 2>&1 &
 EOF
 
@@ -20,7 +21,8 @@ echo "$d pusher was stoped "
 elif [ $1 = "reload" ]; then
 smzdm_pid=`ps -ef |grep smzdmPusher | grep -v 'grep\|stop' | awk '{print $2}' `
 kill -15 $smzdm_pid
-<<EOF source /etc/profile;
+<<EOF 
+source /etc/profile
 nohup ${depolyPath}/smzdmPusher >> ${depolyPath}/smzdm.log 2>&1 &
 EOF
 echo "$d pusher was reloaded "
