@@ -6,7 +6,7 @@ depolyPath="/opt/go/smzdmForGo"
 
 if [ $1 = "start" ]; then
 echo "$d pusher is starting.... "
-# source /etc/profile
+source /etc/profile
 nohup ${depolyPath}/smzdmPusher >> ${depolyPath}/smzdm.log 2>&1 &
 
 elif  [ $1 = "stop" ]; then
