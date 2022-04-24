@@ -2,10 +2,12 @@
 d=`date "+%y-%m/%d %H:%M:%S"`
 #echo "$1$d"
 
+depolyPath="/opt/go/smzdmForGo"
+
 if [ $1 = "start" ]; then
 echo "$d pusher is starting.... "
-source /etc/profile
-nohup ./smzdmPusher >> ./smzdm.log 2>&1 &
+# source /etc/profile
+nohup ${depolyPath}/smzdmPusher >> ${depolyPath}/smzdm.log 2>&1 &
 
 elif  [ $1 = "stop" ]; then
 
@@ -17,7 +19,7 @@ echo "$d pusher was stoped "
 elif [ $1 = "reload" ]; then
 smzdm_pid=`ps -ef |grep smzdmPusher | grep -v 'grep\|stop' | awk '{print $2}' `
 kill -15 $smzdm_pid
-nohup ./smzdmPusher >> ./smzdm.log 2>&1 &
+nohup ${depolyPath}/smzdmPusher >> ${depolyPath}/smzdm.log 2>&1 &
 echo "$d pusher was reloaded "
 
 else
