@@ -101,6 +101,7 @@ func GetSatisfiedGoods(conf file.Config) []Product {
 			fmt.Println("退出")
 			break
 		}
+
 	}
 
 	// 根据评论数排序
