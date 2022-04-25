@@ -97,7 +97,8 @@ func GetSatisfiedGoods(conf file.Config) []Product {
 		time.Sleep(time.Duration(2) * time.Second)
 
 		// 判断是否退出
-		if shouldStop(len(satisfyGoodsList), page) || len(satisfyGoodsList) > 0 {
+		if shouldStop(len(satisfyGoodsList), page) {
+			fmt.Println("退出")
 			break
 		}
 	}
