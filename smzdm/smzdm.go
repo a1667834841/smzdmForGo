@@ -128,7 +128,7 @@ func GetGoods(page int, keword string) result {
 		return res
 	}
 	params.Set("keyword", keword)
-	params.Set("order", "score")
+	params.Set("order", "time")
 	params.Set("type", "good_price")
 	params.Set("offset", strconv.Itoa(page*20))
 	params.Set("limit", "50")
