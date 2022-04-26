@@ -33,5 +33,5 @@ jobs:
           remote_port: 22
           remote_user: root
           remote_key: ${{ secrets.SSH_PRIVATE_KEY }}
-          cmd:  chmod 777 /opt/go/smzdmForGo/smzdm.sh && /opt/go/smzdmForGo/smzdm.sh reload
+          cmd:  systemctl restart smzdm.service
 
