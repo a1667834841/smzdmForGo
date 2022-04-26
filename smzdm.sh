@@ -10,7 +10,7 @@ echo "$d pusher is starting.... "
 # source /etc/profile
 # nohup ${depolyPath}/smzdmPusher >> ${depolyPath}/smzdm.log 2>&1 &
 # EOF
- ${depolyPath}/smzdmPusher
+./smzdmPusher
 
 elif  [ $1 = "stop" ]; then
 
@@ -26,7 +26,7 @@ kill -15 $smzdm_pid
 # source /etc/profile
 # nohup ${depolyPath}/smzdmPusher >> ${depolyPath}/smzdm.log 2>&1 &
 # EOF
- ${depolyPath}/smzdmPusher
+./smzdmPusher
 echo "$d pusher was reloaded "
 
 else
