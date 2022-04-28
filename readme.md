@@ -12,11 +12,9 @@
 - [x]  定时推送
 - [x] 设定关键字，爬取含关键词的商品
 - [x] 利用github Action 自动编译，部署到个人服务器
+- [x] 每天定时打卡
   
 ### 待实现
-
-
-- [ ] 每天定时打卡
 - [ ] 配置server酱
 
 ### 使用步骤
@@ -47,6 +45,13 @@ filterWords:
 tickTime: 43200
 # 钉钉token
 dingdingToken: "xxxxx"
+
+# 签到时间(默认早上8:30)
+cron: "0 30 8 ? * *"
+
+# 签到需要的cookie
+cookie: "XXXX"
+
 ```
 
 如果觉得麻烦可以进群，每天都会推送消息哦（钉钉二维码在最下方！！）
@@ -56,6 +61,8 @@ dingdingToken: "xxxxx"
 ![image-20220419205742369](https://img.ggball.top/picGo/image-20220419205742369.png)
 
 ![image-20220419205914792](https://img.ggball.top/picGo/image-20220419205914792.png)
+
+![20220428194347](https://img.ggball.top/picGo/20220428194347.png)
 
 
 

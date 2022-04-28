@@ -22,6 +22,8 @@ type Config struct {
 	FilterWords   []string `yaml:"filterWords"`
 	KeyWords      []string `yaml:"keyWords"`
 	DingdingToken string   `yaml:"dingdingToken"`
+	Cookie        string   `yaml:"cookie"`
+	Cron          string   `yaml:"cron"`
 }
 
 // 读取已推送文章id 返回map
@@ -117,6 +119,36 @@ func ReadConf() Config {
 	v := viper.New()
 	v.SetConfigName("config") //这里就是上面我们配置的文件名称，不需要带后缀名
 	v.AddConfigPath(wd)       //文件所在的目录路径
+	v.SetConfigType("yml")    //这里是文件格式类型
+
+	err = v.ReadInConfig()
+	if err != nil {
+		log.Fatal("读取配置文件失败：", err)
+		return cnf
+	}
+	configs := v.AllSettings()
+	for k, val := range configs {
+		v.SetDefault(k, val)
+	}
+	err = v.Unmarshal(c) //反序列化至结构体
+	if err != nil {
+		log.Fatal("读取配置错误：", err)
+	}
+	fmt.Print("读取配置文件成功。。")
+	return cnf
+}
+
+func ReadPathConf(path string) Config {
+
+	_, err := os.Getwd()
+	if err != nil {
+		panic(err)
+	}
+	cnf := Config{}
+	c := &cnf
+	v := viper.New()
+	v.SetConfigName("config") //这里就是上面我们配置的文件名称，不需要带后缀名
+	v.AddConfigPath(path)     //文件所在的目录路径
 	v.SetConfigType("yml")    //这里是文件格式类型
 
 	err = v.ReadInConfig()

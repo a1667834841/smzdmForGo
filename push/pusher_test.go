@@ -28,11 +28,11 @@ func TestDingPusher(t *testing.T) {
 		Links: links,
 	}
 
-	params := DingParam{
+	params := DingFeedCardParam{
 		MsgType:  "feedCard",
 		FeedCard: feedCard,
 	}
 
-	dingPusher.Push(params)
+	dingPusher.PushWithFeedCard(params)
 
 }

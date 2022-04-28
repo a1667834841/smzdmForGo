@@ -23,7 +23,7 @@ type DingPusher struct {
 }
 
 // 钉钉推送者实现推送方法
-func (pusher DingPusher) Push(params DingParam) {
+func (pusher DingPusher) PushDingDing(params interface{}) {
 	Url, err := url.Parse("https://oapi.dingtalk.com/robot/send?access_token=" + pusher.Token)
 	if err != nil {
 		return
@@ -49,8 +49,8 @@ func (pusher DingPusher) Push(params DingParam) {
 
 }
 
-// 推送钉钉
-func PushDingDing(pro []smzdm.Product, conf file.Config) {
+// 推送商品到钉钉
+func PushProWithDingDing(pro []smzdm.Product, conf file.Config) {
 	dingPusher := DingPusher{
 		Token: conf.DingdingToken,
 	}
@@ -71,10 +71,28 @@ func PushDingDing(pro []smzdm.Product, conf file.Config) {
 		Links: links,
 	}
 
-	params := DingParam{
+	params := DingFeedCardParam{
 		MsgType:  "feedCard",
 		FeedCard: feedCard,
 	}
 
-	dingPusher.Push(params)
+	dingPusher.PushDingDing(params)
+}
+
+// 推送文字到钉钉
+func PushTextWithDingDing(resText string, conf file.Config) {
+	dingPusher := DingPusher{
+		Token: conf.DingdingToken,
+	}
+
+	text := Text{
+		Content: resText + "【什么值得买】",
+	}
+
+	params := DingTextParam{
+		MsgType: "text",
+		Texts:   text,
+	}
+
+	dingPusher.PushDingDing(params)
 }
