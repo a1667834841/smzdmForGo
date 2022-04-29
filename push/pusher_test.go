@@ -33,6 +33,6 @@ func TestDingPusher(t *testing.T) {
 		FeedCard: feedCard,
 	}
 
-	dingPusher.PushWithFeedCard(params)
+	dingPusher.PushDingDing(params)
 
 }

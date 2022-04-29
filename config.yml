@@ -18,7 +18,7 @@ tickTime: 10800
 dingdingToken: "106aef404757b5a5c7df598663a9590f7ad67a4edd82ed255faee5dbc986776a"
 
 # 签到时间(默认早上8:30)
-cron: "0 30 8 ? * *"
+cron: "0 10 10 ? * *"
 
 # 签到需要的cookie
 cookie: "__ckguid=qRC5IoJYwblay72F1ulNy72; Hm_lvt_9b7ac3d38f30fe89ff0b8a0546904e58=1643167157; device_id=20908683061643167155756709bcdeb981090627de76f217682c306683; __jsluid_s=47f9a28482155774b4c46bf1ad9d96f5; ss_ab=ss4; smzdm_user_source=29A0B6F8323D83952D0F35F3B3F8FF73; homepage_sug=c; r_sort_type=score; sess=AT-y3K2AEQz6bQWs6fNGVPHM4ggON3aZattcY%2FtCjf3bz2b0qKIv4RtVugXEB2QkuZaPxja7X5hKOfqw4XzyCSkYMQC022boIe92OTYBPP7g8exHh2IVp1J%2FEXX; user=user%3A3201266982%7C3201266982; smzdm_id=3201266982; s_his=%E4%BF%A1%E5%B0%8F%E5%85%94; _zdmA.uid=ZDMA.0y7MoYAMf.1651109360.2419200; sensorsdata2015jssdkcross=%7B%22distinct_id%22%3A%223201266982%22%2C%22first_id%22%3A%221804a689e4836d-0d82b2855e431d-6b3e555b-1821369-1804a689e491240%22%2C%22props%22%3A%7B%22%24latest_traffic_source_type%22%3A%22%E8%87%AA%E7%84%B6%E6%90%9C%E7%B4%A2%E6%B5%81%E9%87%8F%22%2C%22%24latest_search_keyword%22%3A%22%E6%9C%AA%E5%8F%96%E5%88%B0%E5%80%BC%22%2C%22%24latest_referrer%22%3A%22https%3A%2F%2Fwww.google.com%2F%22%7D%2C%22%24device_id%22%3A%221804a689e4836d-0d82b2855e431d-6b3e555b-1821369-1804a689e491240%22%7D"

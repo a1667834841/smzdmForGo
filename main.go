@@ -13,18 +13,29 @@ var conf = file.Config{}
 
 func main() {
 
+	go cronForProduct()
+	go cronForCheckIn()
+
+	// 无通道则阻塞
+	select {}
+
+}
+
+func cronForProduct() {
+
 	// 定时搜索商品任务开启
 	requestSmzdm()
 	tick := trick.NewMyTick(conf.TickTime, requestSmzdm)
 	tick.Start()
+}
 
+func cronForCheckIn() {
 	// 每天定时打卡任务开启
 	c := cron.New()
 	c.AddFunc(conf.Cron, func() {
 		check_in.Run(conf)
 	})
 	c.Start()
-
 }
 
 // 推送商品任务
