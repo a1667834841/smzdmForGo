@@ -20,17 +20,8 @@
 ### 使用步骤
 下载整个代码 window平台直接运行`smzdm.exe`，切勿挪动exe文件，会导致读不到配置
 如果想用关键字或者推送自己的钉钉，可以修改配置信息
-**配置式：**
+1. **配置式：**
 修改以下配置，保存配置，再运行`smzdm.exe`即可
-docker
-
-执行 `docker pull registry.cn-hangzhou.aliyuncs.com/ggball/smzdm_for_go:latest`
-再创建配置目录`D:\\documents\\config`（我这里实在win下操作的），将`config/config.yml`文件 放入创建好的配置文件夹
-![20220606095621](https://img.ggball.top/picGo/20220606095621.png)
-最后执行`docker run -d --name smzdmForgo -v D:\\documents\\config:/opt/go/config registry.cn-hangzhou.aliyuncs.com/ggball/smzdm_for_go:latest`
-
-> -v :前是宿主机目录，:后是容器目录
-
 ```yml
 # 搜索关键词
 keyWord: 
@@ -62,6 +53,16 @@ cron: "0 30 8 ? * *"
 cookie: "XXXX"
 
 ```
+2. **docker方式**
+
+- 执行 `docker pull registry.cn-hangzhou.aliyuncs.com/ggball/smzdm_for_go:latest`
+- 再创建配置目录`D:\\documents\\config`（我这里实在win下操作的），将`config/config.yml`文件 放入创建好的配置文件夹
+![20220606095621](https://img.ggball.top/picGo/20220606095621.png)
+- 最后执行`docker run -d --name smzdmForgo -v D:\\documents\\config:/opt/go/config registry.cn-hangzhou.aliyuncs.com/ggball/smzdm_for_go:latest`
+
+> -v :前是宿主机目录，:后是容器目录
+
+
 
 如果觉得麻烦可以进群，每天都会推送消息哦（钉钉二维码在最下方！！）
 
