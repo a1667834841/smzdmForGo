@@ -6,9 +6,6 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
-	"os/exec"
-	"path/filepath"
-	"strings"
 
 	"github.com/spf13/viper"
 )
@@ -63,49 +60,49 @@ func WritePushedInfo(temp map[string]interface{}, pushed map[string]interface{},
 }
 
 // 输入命令行 写入配置文件
-func InputCmd() {
+// func InputCmd() {
 
-	file, _ := exec.LookPath(os.Args[0])
-	path, _ := filepath.Abs(file)
-	index := strings.LastIndex(path, string(os.PathSeparator))
-	path = path[:index]
+// 	file, _ := exec.LookPath(os.Args[0])
+// 	path, _ := filepath.Abs(file)
+// 	index := strings.LastIndex(path, string(os.PathSeparator))
+// 	path = path[:index]
 
-	v := viper.New()
-	// v.SetConfigName("config") //这里就是上面我们配置的文件名称，不需要带后缀名
-	// v.AddConfigPath("../")    //文件所在的目录路径
-	// v.SetConfigType("yml")    //这里是文件格式类型
-	v.SetConfigFile(path + "\\config.yml")
-	err := v.ReadInConfig()
-	if err != nil {
-		log.Fatal("读取配置文件失败：", err)
-	}
+// 	v := viper.New()
+// 	// v.SetConfigName("config") //这里就是上面我们配置的文件名称，不需要带后缀名
+// 	// v.AddConfigPath("../")    //文件所在的目录路径
+// 	// v.SetConfigType("yml")    //这里是文件格式类型
+// 	v.SetConfigFile(path + "\\config.yml")
+// 	err := v.ReadInConfig()
+// 	if err != nil {
+// 		log.Fatal("读取配置文件失败：", err)
+// 	}
 
-	// 读取命令参数
-	for _, args := range os.Args {
-		// fmt.Println("参数"+strconv.Itoa(idx)+":", args)
-		if !strings.Contains(args, "--") {
-			continue
-		}
-		cmdInfos := strings.Split(args, "--")
+// 	// 读取命令参数
+// 	for _, args := range os.Args {
+// 		// fmt.Println("参数"+strconv.Itoa(idx)+":", args)
+// 		if !strings.Contains(args, "--") {
+// 			continue
+// 		}
+// 		cmdInfos := strings.Split(args, "--")
 
-		for _, cmdInfo := range cmdInfos {
-			if !strings.Contains(cmdInfo, "=") {
-				continue
-			}
-			cmds := strings.Split(cmdInfo, "=")
-			// fmt.Printf("%v\n", cmds)
-			if len(cmds) != 2 {
-				fmt.Println("非法命令行参数" + cmdInfo)
-				break
-			}
+// 		for _, cmdInfo := range cmdInfos {
+// 			if !strings.Contains(cmdInfo, "=") {
+// 				continue
+// 			}
+// 			cmds := strings.Split(cmdInfo, "=")
+// 			// fmt.Printf("%v\n", cmds)
+// 			if len(cmds) != 2 {
+// 				fmt.Println("非法命令行参数" + cmdInfo)
+// 				break
+// 			}
 
-			v.Set(cmds[0], cmds[1])
+// 			v.Set(cmds[0], cmds[1])
 
-		}
+// 		}
 
-	}
-	v.WriteConfigAs("./config.yml") // 直接写入，有内容就覆盖，没有文件就新建
-}
+// 	}
+// 	v.WriteConfigAs("./config.yml") // 直接写入，有内容就覆盖，没有文件就新建
+// }
 
 // 读取配置文件
 func ReadConf() Config {
@@ -117,9 +114,9 @@ func ReadConf() Config {
 	cnf := Config{}
 	c := &cnf
 	v := viper.New()
-	v.SetConfigName("config") //这里就是上面我们配置的文件名称，不需要带后缀名
-	v.AddConfigPath(wd)       //文件所在的目录路径
-	v.SetConfigType("yml")    //这里是文件格式类型
+	v.SetConfigName("config")       //这里就是上面我们配置的文件名称，不需要带后缀名
+	v.AddConfigPath(wd + "/config") //文件所在的目录路径
+	v.SetConfigType("yml")          //这里是文件格式类型
 
 	err = v.ReadInConfig()
 	if err != nil {
