@@ -12,7 +12,7 @@ env: # 设置环境变量
 jobs: 
   build:
     runs-on: ubuntu-latest # 运行在虚拟机环境ubuntu-latest
-     environment: test
+    environment: test
     steps:
       - name: Checkout
         uses: actions/checkout@v1 # 作用：检出仓库，获取源码。
