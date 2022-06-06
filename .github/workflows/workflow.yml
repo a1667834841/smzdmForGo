@@ -22,6 +22,7 @@ jobs:
           go-version: '1.13.1'
       - name: add-cookie
         run: |
+          echo '${{secrets.COOKIE}}'
           sed -i 's/$COOKIE/${{secrets.COOKIE}}/' ./config/config.yml
       - name: build-app
         run: go build -o smzdmPusher
