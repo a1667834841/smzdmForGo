@@ -12,7 +12,7 @@ import (
 	"ggball.com/smzdm/push"
 )
 
-func Run(conf file.Config) {
+func Run(conf file.Config) string {
 
 	client := &http.Client{}
 	//生成要访问的url
@@ -40,6 +40,8 @@ func Run(conf file.Config) {
 	// 推送
 	push.PushTextWithDingDing(returnText, conf)
 
+	return returnText
+
 }
 
 func returnResult(resMap map[string]interface{}) string {
@@ -49,12 +51,13 @@ func returnResult(resMap map[string]interface{}) string {
 
 	// 结果code
 	errorCode := resMap["error_code"]
-	// 连续签到天数
-	data := resMap["data"].(map[string]interface{})
-	continueCheckinDays := data["continue_checkin_days"]
 
-	fmt.Println("continueCheckinDays:", reflect.TypeOf(continueCheckinDays))
 	if float64(0) == errorCode {
+		// 连续签到天数
+		data := resMap["data"].(map[string]interface{})
+		continueCheckinDays := data["continue_checkin_days"]
+
+		fmt.Println("continueCheckinDays:", reflect.TypeOf(continueCheckinDays))
 		v, ok := continueCheckinDays.(float64)
 		if ok {
 			// 签到成功
@@ -62,7 +65,7 @@ func returnResult(resMap map[string]interface{}) string {
 			returnText = "恭喜签到成功！您已连续签到" + strconv.FormatFloat(continueCheckinDays.(float64), 'f', 0, 64) + "天!"
 		} else {
 			fmt.Println("err:", v)
-			returnText = "error"
+			returnText = "error" + resMap["error_msg"].(string)
 		}
 
 	} else {

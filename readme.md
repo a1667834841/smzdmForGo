@@ -16,6 +16,7 @@
   
 ### 待实现
 - [ ] 配置server酱
+- [ ] 配置签到
 
 ### 使用步骤
 下载整个代码 window平台直接运行`smzdm.exe`，切勿挪动exe文件，会导致读不到配置
@@ -61,6 +62,12 @@ cookie: "XXXX"
 - 最后执行`docker run -d --name smzdmForgo -v D:\\documents\\config:/opt/go/config registry.cn-hangzhou.aliyuncs.com/ggball/smzdm_for_go:latest`
 
 > -v :前是宿主机目录，:后是容器目录
+
+**配置签到**
+
+![20220810003120](https://img.ggball.top/picGo/20220810003120.png)
+
+
 
 
 

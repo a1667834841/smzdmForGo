@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <title>layui 调试预览</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/layui/2.7.6/css/layui.css"  media="all">
+  <style>
+    body{margin: 10px;}
+    .demo-carousel{height: 1200px; line-height: 200px; text-align: center;}
+  </style>
+</head>
+<body>
+ 
+<table class="layui-hide" id="demo" lay-filter="test"></table>
+ 
+<script type="text/html" id="barDemo">
+  <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="check">立即签到</a>
+ 
+</script>
+
+<script type="text/html" id="toolbarDemo">
+  <div class="layui-btn-container">
+
+  <button class="layui-btn layui-btn-sm" lay-event="getInsert">新增</button>
+  </div>
+ </script>
+ 
+
+
+
+  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/layui/2.7.6/layui.js"></script>
+<script>
+layui.config({
+  version: '1632428048355' //为了更新 js 缓存，可忽略
+});
+ 
+//加载模块  
+layui.use(function(){ //亦可加载特定模块：layui.use(['layer', 'laydate', function(){
+  //得到各种内置组件
+  var layer = layui.layer //弹层
+  ,laypage = layui.laypage //分页
+  ,laydate = layui.laydate //日期
+  ,table = layui.table //表格
+  ,carousel = layui.carousel //轮播
+  ,upload = layui.upload //上传
+  ,element = layui.element //元素操作
+  ,slider = layui.slider //滑块
+  ,dropdown = layui.dropdown //下拉菜单
+  ,$ = layui.jquery
+  ,form = layui.form
+
+  
+  
+  //监听Tab切换
+  element.on('tab(demo)', function(data){
+    layer.tips('切换了 '+ data.index +'：'+ this.innerHTML, this, {
+      tips: 1
+    });
+  });
+  
+  //执行一个 table 实例
+  table.render({
+    elem: '#demo'
+    ,height: 420
+    ,url: 'http://localhost:9090/conf' //数据接口
+    // ,url: '../demo/table/user/-page=1&limit=20.js' //数据接口
+    ,title: 'smzdm签到表'
+    ,page: false //开启分页
+    ,toolbar: '#toolbarDemo' //开启工具栏，此处显示默认图标，可以自定义模板，详见文档
+    ,defaultToolbar:[]
+    ,totalRow: false //开启合计行
+    ,cols: [[ //表头
+      {type: 'checkbox', fixed: 'left'}
+      ,{field: 'Id', title: 'ID', width:80, sort: true, fixed: 'left'}
+      ,{field: 'LastTIme', title: '最近执行时间',align:'center', width:250}
+      ,{field: 'Remark', title: '备注', width: 250, align:'center'}
+      ,{field: 'LastMsg', title: '最近执行返回消息',align:'center', width:400}
+      ,{field: 'LastResult', title: '最近执行结果',align:'center', width:200} 
+      ,{field: 'Cookie', title: 'cookie',align:'center', width:200} 
+      ,{fixed: 'right', width: 180, align:'center', toolbar: '#barDemo'}
+    ]]
+  });
+  
+  //监听头工具栏事件
+  table.on('toolbar(test)', function(obj){
+    var checkStatus = table.checkStatus(obj.config.id)
+    ,data = checkStatus.data; //获取选中的数据
+    switch(obj.event){
+      case 'getInsert':
+        layer.msg('添加');
+        layer.open({
+                type: 2,
+                //title: '收藏管理 (考生姓名：张无忌)',
+                title: 'smzdm签到信息',
+                shadeClose: true,           //弹出框之外的地方是否可以点击
+                offset: '10%',
+                area: ['60%', '80%'],
+                content: 'html/form',
+                success: function(layero, index){
+                  
+                },
+                yes:function(){
+                    console.log(111)
+                }
+            });
+      break;
+    };
+  });
+  
+  //监听行工具事件
+  table.on('tool(test)', function(obj){ //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
+    var lineData = obj.data //获得当前行数据
+    ,layEvent = obj.event; //获得 lay-event 对应的值
+    console.log(lineData)
+
+    var postData = [
+      {
+        "cookie":lineData.Cookie
+      }
+    ]
+
+    switch(obj.event){
+      case 'check':
+        $.ajax({
+          url:"http://localhost:9090/check",
+          contentType: "application/json;charset=utf-8",
+          data:JSON.stringify(postData),
+          async: false,
+          dataType: "json",
+          type:'POST',
+          success:function(res) {
+            console.log(res)
+            layer.msg(res.data);
+          }
+      })
+      break;
+    };
+  });
+  
+
+  
+
+  
+  //底部信息
+  var footerTpl = lay('#footer')[0].innerHTML;
+  lay('#footer').html(layui.laytpl(footerTpl).render({}))
+  .removeClass('layui-hide');
+});
+</script>
+
+</body>
+</html>        
+        
