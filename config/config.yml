@@ -19,6 +19,3 @@ dingdingToken: "106aef404757b5a5c7df598663a9590f7ad67a4edd82ed255faee5dbc986776a
 
 # 签到时间(默认早上8:30)
 cron: "0 10 10 ? * *"
-
-# 签到需要的cookie
-cookie: $COOKIE

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"time"
 
 	"ggball.com/smzdm/check_in"
 	"ggball.com/smzdm/file"
@@ -14,6 +15,7 @@ import (
 )
 
 var conf = file.Config{}
+var checks = []file.CheckInfo{}
 
 func main() {
 
@@ -22,7 +24,7 @@ func main() {
 
 	// 启动web服务，监听9090端口
 	fmt.Println("启动web服务，监听9090端口")
-	err := http.ListenAndServe(":9090", nil)
+	err := http.ListenAndServe(":9090/smzdm", nil)
 
 	if err != nil {
 		log.Fatal("ListenAndServe: ", err)
@@ -43,7 +45,7 @@ func cronForCheckIn() {
 
 	c := cron.New()
 	c.AddFunc(conf.Cron, func() {
-		check_in.Run(conf)
+		check_in.Run(conf, checks)
 	})
 	c.Start()
 }
@@ -52,14 +54,19 @@ func cronForCheckIn() {
 func requestSmzdm() {
 	// 搜索商品
 	products := smzdm.GetSatisfiedGoods(conf)
+	if len(products) == 0 {
+		return
+	}
 	// 推送商品
 	push.PushProWithDingDing(products, conf)
+	time.Sleep(1 * time.Second)
 }
 
 func init() {
 
 	// 读取配置文件
 	conf = file.ReadConf()
+	checks = file.ReadCheckInfoJsonToCheck()
 
 	// 配置路由
 	http.HandleFunc("/", IndexHandler)

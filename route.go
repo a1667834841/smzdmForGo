@@ -13,15 +13,6 @@ import (
 	"ggball.com/smzdm/file"
 )
 
-type CheckInfo struct {
-	Id         int    `json:Id`
-	LastTIme   string `json:LastTIme`
-	Remark     string `json:Remark`
-	LastMsg    string `json:LastMsg`
-	LastResult string `json:LastResult`
-	Cookie     string `json:Cookie`
-}
-
 func IndexHandler(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path == "/" {
 		t, err := template.ParseFiles("template/html/index.html")
@@ -78,13 +69,11 @@ func CheckInHandler(w http.ResponseWriter, r *http.Request) {
 	checkInfo := deserializeJson(string(body))[0]
 	fmt.Println("checkInfo:", checkInfo)
 	conf = file.Config{}
-	conf.Cookie = checkInfo.Cookie
 	conf.DingdingToken = "106aef404757b5a5c7df598663a9590f7ad67a4edd82ed255faee5dbc986776a"
 
-	checkRsult := check_in.Run(conf)
-	fmt.Println("checkRsult:", checkRsult)
+	check_in.Run(conf, []file.CheckInfo{checkInfo})
 	w.Header().Set("Content-Type", "application/json")
-	w.Write([]byte(wrapDataWithResult("\"" + checkRsult + "\"")))
+	w.Write([]byte(wrapDataWithResult("\"" + "签到结束！" + "\"")))
 
 }
 
@@ -104,7 +93,7 @@ func readCheckInfoJson() []byte {
 	return jsonByte
 }
 
-func writeCheckInfoJson(chekInfos []CheckInfo) {
+func writeCheckInfoJson(chekInfos []file.CheckInfo) {
 	file, e := os.OpenFile("./template/json/checkInfo.json", os.O_CREATE|os.O_WRONLY, 0666)
 	if e != nil {
 		fmt.Println("文件打开失败")
@@ -121,10 +110,10 @@ func writeCheckInfoJson(chekInfos []CheckInfo) {
 	}
 }
 
-func deserializeJson(CheckInfoJson string) []CheckInfo {
-	fmt.Println("CheckInfoJson:", CheckInfoJson)
+func deserializeJson(CheckInfoJson string) []file.CheckInfo {
+	// fmt.Println("CheckInfoJson:", CheckInfoJson)
 	jsonAsBytes := []byte(CheckInfoJson)
-	checks := make([]CheckInfo, 0)
+	checks := make([]file.CheckInfo, 0)
 	err := json.Unmarshal(jsonAsBytes, &checks)
 	// fmt.Printf("%#v", checks)
 	if err != nil {

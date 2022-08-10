@@ -35,6 +35,9 @@
 layui.config({
   version: '1632428048355' //为了更新 js 缓存，可忽略
 });
+
+// var BASE_URL = "http://127.0.0.1:9090"
+var BASE_URL = "http://localhost:9090"
  
 //加载模块  
 layui.use(function(){ //亦可加载特定模块：layui.use(['layer', 'laydate', function(){
@@ -64,7 +67,7 @@ layui.use(function(){ //亦可加载特定模块：layui.use(['layer', 'laydate'
   table.render({
     elem: '#demo'
     ,height: 420
-    ,url: 'http://127.0.0.1:9090/conf' //数据接口
+    ,url: BASE_URL+'/conf' //数据接口
     // ,url: '../demo/table/user/-page=1&limit=20.js' //数据接口
     ,title: 'smzdm签到表'
     ,page: false //开启分页
@@ -117,14 +120,15 @@ layui.use(function(){ //亦可加载特定模块：layui.use(['layer', 'laydate'
 
     var postData = [
       {
-        "cookie":lineData.Cookie
+        "cookie":lineData.Cookie,
+        "id":lineData.Id
       }
     ]
 
     switch(obj.event){
       case 'check':
         $.ajax({
-          url:"http://127.0.0.1:9090/check",
+          url:BASE_URL+"/check",
           contentType: "application/json;charset=utf-8",
           data:JSON.stringify(postData),
           async: false,
@@ -133,6 +137,7 @@ layui.use(function(){ //亦可加载特定模块：layui.use(['layer', 'laydate'
           success:function(res) {
             console.log(res)
             layer.msg(res.data);
+            location.reload();
           }
       })
       break;

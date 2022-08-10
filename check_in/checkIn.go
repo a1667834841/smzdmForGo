@@ -12,35 +12,44 @@ import (
 	"ggball.com/smzdm/push"
 )
 
-func Run(conf file.Config) string {
+func Run(conf file.Config, checks []file.CheckInfo) {
 
-	client := &http.Client{}
-	//生成要访问的url
-	url := "https://zhiyou.smzdm.com/user/checkin/jsonp_checkin"
-	//提交请求
-	reqest, err := http.NewRequest("GET", url, nil)
+	for _, check := range checks {
+		client := &http.Client{}
+		//生成要访问的url
+		url := "https://zhiyou.smzdm.com/user/checkin/jsonp_checkin"
+		//提交请求
+		reqest, err := http.NewRequest("GET", url, nil)
 
-	//增加header选项
-	reqest.Header.Add("Cookie", conf.Cookie)
-	reqest.Header.Add("Host", "zhiyou.smzdm.com")
-	reqest.Header.Add("Referer", "https://www.smzdm.com/")
+		//增加header选项
+		reqest.Header.Add("Cookie", check.Cookie)
+		reqest.Header.Add("Host", "zhiyou.smzdm.com")
+		reqest.Header.Add("Referer", "https://www.smzdm.com/")
 
-	if err != nil {
-		panic(err)
+		if err != nil {
+			panic(err)
+		}
+		//处理返回结果
+		response, _ := client.Do(reqest)
+		defer response.Body.Close()
+
+		// 将json转为map
+		resMap := TransResToMap(response)
+
+		returnText := returnResult(resMap)
+
+		// 推送
+		push.PushTextWithDingDing(returnText, conf)
+
+		// 修改用戶最近一次签到结果
+		resultCode := ""
+		if resMap["error_code"] == float64(0) {
+			resultCode = "success"
+		} else {
+			resultCode = "faild"
+		}
+		file.UpdateCheckInfoById(check.Id, resultCode, returnText)
 	}
-	//处理返回结果
-	response, _ := client.Do(reqest)
-	defer response.Body.Close()
-
-	// 将json转为map
-	resMap := TransResToMap(response)
-
-	returnText := returnResult(resMap)
-
-	// 推送
-	push.PushTextWithDingDing(returnText, conf)
-
-	return returnText
 
 }
 
