@@ -31,7 +31,7 @@ jobs:
         with:
           # 这里是 rsync 的参数 switches: -avzh --delete --exclude="" --include="" --filter=""
           switches: -avzh
-          path: ./smzdmPusher ./smzdm.sh config
+          path: ./smzdmPusher ./smzdm.sh config template
           remote_path: /opt/go/smzdmForGo
           remote_host: 1.15.141.114
           remote_port: 22
