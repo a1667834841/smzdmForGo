@@ -24,7 +24,7 @@ func main() {
 
 	// 启动web服务，监听9090端口
 	fmt.Println("启动web服务，监听9090端口")
-	err := http.ListenAndServe(":9090/smzdm", nil)
+	err := http.ListenAndServe(":9090", nil)
 
 	if err != nil {
 		log.Fatal("ListenAndServe: ", err)
