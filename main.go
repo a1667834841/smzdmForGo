@@ -17,8 +17,8 @@ var conf = file.Config{}
 
 func main() {
 
-	// go cronForProduct()
-	// go cronForCheckIn()
+	go cronForProduct()
+	go cronForCheckIn()
 
 	// 启动web服务，监听9090端口
 	fmt.Println("启动web服务，监听9090端口")
