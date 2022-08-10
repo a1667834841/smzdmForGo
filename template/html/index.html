@@ -64,7 +64,7 @@ layui.use(function(){ //亦可加载特定模块：layui.use(['layer', 'laydate'
   table.render({
     elem: '#demo'
     ,height: 420
-    ,url: 'conf' //数据接口
+    ,url: 'http://127.0.0.1:9090/conf' //数据接口
     // ,url: '../demo/table/user/-page=1&limit=20.js' //数据接口
     ,title: 'smzdm签到表'
     ,page: false //开启分页
@@ -124,7 +124,7 @@ layui.use(function(){ //亦可加载特定模块：layui.use(['layer', 'laydate'
     switch(obj.event){
       case 'check':
         $.ajax({
-          url:"check",
+          url:"http://127.0.0.1:9090/check",
           contentType: "application/json;charset=utf-8",
           data:JSON.stringify(postData),
           async: false,
