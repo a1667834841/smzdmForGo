@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"sync"
 	"time"
 
 	"github.com/spf13/viper"
@@ -204,7 +205,7 @@ func UpdateCheckInfoById(id int, resultCode string, resultMsg string) {
 	}
 	fmt.Println(checks)
 	// 保存
-	writeCheckInfoJson(checks)
+	WriteCheckInfoJson(checks)
 
 }
 
@@ -220,7 +221,11 @@ func DeserializeJson(CheckInfoJson string) []CheckInfo {
 	return checks
 }
 
-func writeCheckInfoJson(chekInfos []CheckInfo) {
+func WriteCheckInfoJson(chekInfos []CheckInfo) {
+	// 互斥锁
+	var mutex sync.Mutex
+
+	mutex.Lock()
 	// 读取checkInfo 数据
 	wd, error := os.Getwd()
 	if error != nil {
@@ -240,6 +245,7 @@ func writeCheckInfoJson(chekInfos []CheckInfo) {
 	} else {
 		fmt.Println("编码成功")
 	}
+	mutex.Unlock()
 }
 
 func ReadCheckInfoJsonToByte() []byte {

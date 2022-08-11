@@ -58,7 +58,7 @@ func AddCheckInfoHandler(w http.ResponseWriter, r *http.Request) {
 	newcheckInfo.Id = checks[len(checks)-1].Id + 1
 	// 写入
 	checks = append(checks, newcheckInfo)
-	writeCheckInfoJson(checks)
+	file.WriteCheckInfoJson(checks)
 	w.Write([]byte(wrapDataWithResult("\"" + "添加成功" + "\"")))
 	// fmt.Println(checks)
 }
@@ -91,23 +91,6 @@ func readCheckInfoJson() []byte {
 
 	jsonByte, _ := ioutil.ReadAll(jsonFile)
 	return jsonByte
-}
-
-func writeCheckInfoJson(chekInfos []file.CheckInfo) {
-	file, e := os.OpenFile("./template/json/checkInfo.json", os.O_CREATE|os.O_WRONLY, 0666)
-	if e != nil {
-		fmt.Println("文件打开失败")
-	} else {
-		fmt.Println("文件打开成功")
-	}
-	// 创建编码器
-	encoder := json.NewEncoder(file)
-	err := encoder.Encode(chekInfos)
-	if err != nil {
-		fmt.Println("编码失败")
-	} else {
-		fmt.Println("编码成功")
-	}
 }
 
 func deserializeJson(CheckInfoJson string) []file.CheckInfo {
