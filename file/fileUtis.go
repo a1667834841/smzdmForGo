@@ -231,20 +231,28 @@ func WriteCheckInfoJson(chekInfos []CheckInfo) {
 	if error != nil {
 		fmt.Println(error)
 	}
-	file, e := os.OpenFile(""+wd+"/template/json/checkInfo.json", os.O_CREATE|os.O_WRONLY, 0666)
-	if e != nil {
-		fmt.Println("文件打开失败")
-	} else {
-		fmt.Println("文件打开成功")
-	}
-	// 创建编码器
-	encoder := json.NewEncoder(file)
-	err := encoder.Encode(chekInfos)
+	// file, e := os.OpenFile(""+wd+"/template/json/checkInfo.json", os.O_CREATE|os.O_WRONLY, 0666)
+	// if e != nil {
+	// 	fmt.Println("文件打开失败")
+	// } else {
+	// 	fmt.Println("文件打开成功")
+	// }
+
+	data, _ := json.Marshal(chekInfos)
+
+	err := ioutil.WriteFile(""+wd+"/template/json/checkInfo.json", data, 0644)
 	if err != nil {
-		fmt.Println("编码失败")
-	} else {
-		fmt.Println("编码成功")
+		panic(err)
 	}
+
+	// // 创建编码器
+	// encoder := json.NewEncoder(file)
+	// err := encoder.Encode(chekInfos)
+	// if err != nil {
+	// 	fmt.Println("编码失败")
+	// } else {
+	// 	fmt.Println("编码成功")
+	// }
 	mutex.Unlock()
 }
 

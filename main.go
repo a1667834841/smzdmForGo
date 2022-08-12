@@ -35,7 +35,7 @@ func main() {
 func cronForProduct() {
 
 	// 定时搜索商品任务开启
-	requestSmzdm()
+	// requestSmzdm()
 	tick := trick.NewMyTick(conf.TickTime, requestSmzdm)
 	tick.Start()
 }
