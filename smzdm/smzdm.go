@@ -133,7 +133,7 @@ func GetGoods(page int, keword string) result {
 	params.Set("order", "time")
 	params.Set("type", "good_price")
 	params.Set("offset", strconv.Itoa(page*100))
-	params.Set("limit", "100")
+	params.Set("limit", "50")
 
 	Url.RawQuery = params.Encode()
 	urlPath := Url.String()
