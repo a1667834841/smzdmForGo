@@ -25,7 +25,7 @@ jobs:
           echo '${{secrets.COOKIE}}'
           sed -i 's/$COOKIE/${{secrets.COOKIE}}/' ./config/config.yml
       - name: build-app
-        run: go build -o smzdmPusher
+        run: go build -o smzdmPusher ./
       - name: depoly
         uses: ./.github/actions/cd
         with:

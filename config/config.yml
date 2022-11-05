@@ -4,7 +4,7 @@ keyWords:
 # 最低评论数
 lowCommentNum: 1
 # 最低值率
-lowWorthyNum: 10
+lowWorthyNum: 50
 # 满意商品数量
 satisfyNum: 10
 # 过滤词
@@ -13,7 +13,7 @@ filterWords:
 - "售罄"
 
 # 定时任务多长执行一次 单位秒 默认 3个小时
-tickTime: 5
+tickTime: 3600
 # 钉钉token
 dingdingToken: "106aef404757b5a5c7df598663a9590f7ad67a4edd82ed255faee5dbc986776a"
 

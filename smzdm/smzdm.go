@@ -130,10 +130,11 @@ func GetGoods(page int, keword string) result {
 		return res
 	}
 	params.Set("keyword", keword)
-	params.Set("order", "time")
+	// score 值率排序  time 时间排序
+	params.Set("order", "score")
 	params.Set("type", "good_price")
 	params.Set("offset", strconv.Itoa(page*100))
-	params.Set("limit", "50")
+	params.Set("limit", "100")
 
 	Url.RawQuery = params.Encode()
 	urlPath := Url.String()
@@ -156,7 +157,7 @@ func GetGoods(page int, keword string) result {
 func shouldStop(length int, page int) bool {
 	fmt.Println("length:" + strconv.Itoa(length) + "\n\r page:" + strconv.Itoa(page))
 	//  判断数量是否超过【符合商品个数】 且 page > 20
-	return length > globalConf.SatisfyNum || page > 20
+	return length > globalConf.SatisfyNum || page > 100
 
 }
 

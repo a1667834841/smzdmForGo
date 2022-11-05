@@ -14,8 +14,11 @@ import (
 
 // 配置文件
 type Config struct {
-	LowCommentNum int      `yaml:"lowCommentNum"`
-	LowWorthyNum  int      `yaml:"lowWorthyNum"`
+	LowCommentNum int     `yaml:"lowCommentNum"`
+	MaxPrice      float64 `yaml:"maxPrice"`
+	MinPrice      float64 `yaml:"minPrice"`
+	LowWorthyNum  int     `yaml:"lowWorthyNum"`
+
 	SatisfyNum    int      `yaml:"satisfyNum"`
 	TickTime      int      `yaml:"tickTime"`
 	FilterWords   []string `yaml:"filterWords"`
