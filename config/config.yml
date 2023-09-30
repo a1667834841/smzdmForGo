@@ -1,10 +1,12 @@
 # 搜索关键词
 keyWords: 
+- 豆浆粉
+- 显示器
 
 # 最低评论数
 lowCommentNum: 1
 # 最低值率
-lowWorthyNum: 50
+lowWorthyNum: 70
 # 满意商品数量
 satisfyNum: 10
 # 过滤词
@@ -13,9 +15,9 @@ filterWords:
 - "售罄"
 
 # 定时任务多长执行一次 单位秒 默认 3个小时
-tickTime: 3600
+tickTime: 60
 # 钉钉token
-dingdingToken: "106aef404757b5a5c7df598663a9590f7ad67a4edd82ed255faee5dbc986776a"
+dingdingToken: "9e4044952fe5c599afed3815ccaa387c650fd07bda96512648acfceb1b202ada"
 
 # 签到时间(默认早上8:30)
 cron: "0 10 10 ? * *"
