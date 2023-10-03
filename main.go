@@ -65,7 +65,7 @@ func requestSmzdm() {
 func init() {
 
 	// 读取配置文件
-	conf = file.ReadConf()
+	conf = file.ReadConf("")
 	checks = file.ReadCheckInfoJsonToCheck()
 
 	// 配置路由

@@ -30,7 +30,7 @@ func (pusher DingPusher) PushDingDing(params interface{}) {
 	}
 
 	paramsJson, _ := json.Marshal(params)
-
+	fmt.Println(paramsJson)
 	urlPath := Url.String()
 	resp, err := http.Post(urlPath, "application/json;charset=utf-8", bytes.NewBuffer([]byte(string(paramsJson))))
 	if err != nil {

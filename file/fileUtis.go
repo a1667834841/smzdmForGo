@@ -119,11 +119,14 @@ func WritePushedInfo(temp map[string]interface{}, pushed map[string]interface{},
 // }
 
 // 读取配置文件
-func ReadConf() Config {
+func ReadConf(pwd string) Config {
 
 	wd, err := os.Getwd()
 	if err != nil {
 		panic(err)
+	}
+	if pwd != "" {
+		wd = pwd
 	}
 	cnf := Config{}
 	c := &cnf

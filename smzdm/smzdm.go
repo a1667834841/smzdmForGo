@@ -44,7 +44,8 @@ var globalConf = file.Config{}
 var pushedPath = "./pushed.json"
 
 // 获取商品
-//  @return []product
+//
+//	@return []product
 func GetSatisfiedGoods(conf file.Config) []Product {
 	globalConf = conf
 	fmt.Println("开始爬取符合条件商品。。")
@@ -118,8 +119,9 @@ func GetSatisfiedGoods(conf file.Config) []Product {
 }
 
 // GetGoods 获取商品集合
-//  @param offset
-//  @return result 商品集合
+//
+//	@param offset
+//	@return result 商品集合
 func GetGoods(page int, keword string) result {
 
 	var res result
@@ -131,7 +133,7 @@ func GetGoods(page int, keword string) result {
 	}
 	params.Set("keyword", keword)
 	// score 值率排序  time 时间排序
-	params.Set("order", "score")
+	params.Set("order", "time")
 	params.Set("type", "good_price")
 	params.Set("offset", strconv.Itoa(page*100))
 	params.Set("limit", "100")
@@ -210,14 +212,16 @@ func satisfy(good Product, satisfyGoodsList []Product) bool {
 
 	// 评论 和 值率 转int
 	articleComment, err1 := strconv.Atoi(good.ArticleComment)
-	articleWorthy, err2 := strconv.Atoi(good.ArticleWorthy)
-	if err1 != nil || err2 != nil {
+	// articleWorthy, err2 := strconv.Atoi(good.ArticleWorthy)
+	// && articleWorthy >= globalConf.LowWorthyNum
+	// || err2 != nil
+	if err1 != nil {
 		fmt.Println("goods:", good)
 		panic(err1)
 	}
 
 	// 评论，值率满足要求 则添加商品
-	if articleComment >= globalConf.LowCommentNum && articleWorthy >= globalConf.LowWorthyNum {
+	if articleComment >= globalConf.LowCommentNum {
 		// fmt.Printf("appear satisfy good: %#v", good)
 		return true
 	}

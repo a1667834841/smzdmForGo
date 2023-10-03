@@ -7,6 +7,6 @@ import (
 )
 
 func TestGetGoods(t *testing.T) {
-	conf := file.ReadConf()
+	conf := file.ReadConf("E:\\project\\go\\smzdmForGo")
 	GetSatisfiedGoods(conf)
 }
