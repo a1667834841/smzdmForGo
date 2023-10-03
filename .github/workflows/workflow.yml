@@ -19,7 +19,7 @@ jobs:
       - name: set-go-environment
         uses: actions/setup-go@v3 # uses 和 run 不能同时在一个step使用
         with:
-          go-version: '1.13.1'
+          go-version: '1.18'
       - name: add-cookie
         run: |
           echo '${{secrets.COOKIE}}'
