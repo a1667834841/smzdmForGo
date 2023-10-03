@@ -13,7 +13,7 @@ filterWords:
 - "售罄"
 
 # 定时任务多长执行一次 单位秒 默认 3个小时
-tickTime: 1
+tickTime: 3600
 # 钉钉token
 dingdingToken: "9e4044952fe5c599afed3815ccaa387c650fd07bda96512648acfceb1b202ada"
 
