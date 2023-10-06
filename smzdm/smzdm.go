@@ -212,17 +212,17 @@ func satisfy(good Product, satisfyGoodsList []Product) bool {
 
 	// 评论 和 值率 转int
 	articleComment, err1 := strconv.Atoi(good.ArticleComment)
-	// articleWorthy, err2 := strconv.Atoi(good.ArticleWorthy)
-	// && articleWorthy >= globalConf.LowWorthyNum
+	articleWorthy, err2 := strconv.Atoi(good.ArticleWorthy)
+
 	// || err2 != nil
-	if err1 != nil {
+	if err1 != nil || err2 != nil {
 		fmt.Println("goods:", good)
 		panic(err1)
 	}
 
 	// 评论，值率满足要求 则添加商品
-	if articleComment >= globalConf.LowCommentNum {
-		// fmt.Printf("appear satisfy good: %#v", good)
+	if articleComment >= globalConf.LowCommentNum || articleWorthy >= globalConf.LowWorthyNum {
+		fmt.Printf("appear satisfy good: %#v", good)
 		return true
 	}
 
