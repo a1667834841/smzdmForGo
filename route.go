@@ -69,7 +69,7 @@ func CheckInHandler(w http.ResponseWriter, r *http.Request) {
 	checkInfo := deserializeJson(string(body))[0]
 	fmt.Println("checkInfo:", checkInfo)
 	conf = file.Config{}
-	conf.DingdingToken = "106aef404757b5a5c7df598663a9590f7ad67a4edd82ed255faee5dbc986776a"
+	conf.DingdingToken = "9e4044952fe5c599afed3815ccaa387c650fd07bda96512648acfceb1b202ada"
 
 	check_in.Run(conf, []file.CheckInfo{checkInfo})
 	w.Header().Set("Content-Type", "application/json")
