@@ -56,7 +56,7 @@ func PushProWithDingDing(pro []smzdm.Product, conf file.Config) {
 	}
 
 	// 需要提前申明数组的容量
-	links := make([]Link, len(pro))
+	links := make([]Link, conf.SatisfyNum)
 
 	for index, item := range pro {
 		link := Link{
@@ -65,7 +65,11 @@ func PushProWithDingDing(pro []smzdm.Product, conf file.Config) {
 			PicURL:     item.ArticlePic,
 		}
 		links[index] = link
+		if index == conf.SatisfyNum-1 {
+			break
+		}
 	}
+	fmt.Printf("links:%#v", links)
 
 	feedCard := FeedCard{
 		Links: links,
