@@ -53,12 +53,15 @@ func cronForCheckIn() {
 // 推送商品任务
 func requestSmzdm() {
 	// 搜索商品
-	products := smzdm.GetSatisfiedGoods(conf)
-	if len(products) == 0 {
+	satisfyGoodsList, satisfyGoodsMyselfList := smzdm.GetSatisfiedGoods(conf)
+	if len(satisfyGoodsList) == 0 {
 		return
 	}
 	// 推送商品
-	push.PushProWithDingDing(products, conf)
+	push.PushProWithDingDing(satisfyGoodsList, conf)
+	// 推送自己关注的商品
+	atMobiles := []string{"13217913287"}
+	push.PushTextWithDingDingWIthMoblie(satisfyGoodsMyselfList, conf, atMobiles)
 	time.Sleep(1 * time.Second)
 }
 

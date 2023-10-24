@@ -30,7 +30,9 @@ func (pusher DingPusher) PushDingDing(params interface{}) {
 	}
 
 	paramsJson, _ := json.Marshal(params)
-	fmt.Println(paramsJson)
+	// paramsJson转string
+	paramsStr := (*string)(unsafe.Pointer(&paramsJson)) //转化为string,优化内存
+	fmt.Println(*paramsStr)
 	urlPath := Url.String()
 	resp, err := http.Post(urlPath, "application/json;charset=utf-8", bytes.NewBuffer([]byte(string(paramsJson))))
 	if err != nil {
@@ -98,5 +100,37 @@ func PushTextWithDingDing(resText string, conf file.Config) {
 		Texts:   text,
 	}
 
+	dingPusher.PushDingDing(params)
+}
+
+// 推送文字到钉钉并@人
+func PushTextWithDingDingWIthMoblie(pro []smzdm.Product, conf file.Config, atMobiles []string) {
+
+	if len(pro) == 0 {
+		return
+	}
+
+	dingPusher := DingPusher{
+		Token: conf.DingdingToken,
+	}
+
+	title := "【好物到了】 \n"
+	text := ""
+	for _, item := range pro {
+		text += "[**" + item.ArticleTitle + "**](" + item.ArticleUrl + ") :" + item.ArticlePrice + "  " + "\n\r"
+	}
+	md := Markdown{Title: title, Text: text}
+	params := DingMdParam{
+		MsgType:  "markdown",
+		Markdown: md,
+	}
+
+	textParams := DingTextParam{
+		MsgType: "text",
+		Texts:   Text{Content: title},
+		At:      At{AtMobiles: atMobiles, IsAtAll: false},
+	}
+
+	dingPusher.PushDingDing(textParams)
 	dingPusher.PushDingDing(params)
 }

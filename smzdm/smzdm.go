@@ -46,7 +46,7 @@ var pushedPath = "./pushed.json"
 // 获取商品
 //
 //	@return []product
-func GetSatisfiedGoods(conf file.Config) []Product {
+func GetSatisfiedGoods(conf file.Config) ([]Product, []Product) {
 	globalConf = conf
 	fmt.Println("开始爬取符合条件商品。。")
 
@@ -56,19 +56,25 @@ func GetSatisfiedGoods(conf file.Config) []Product {
 	// 符合条件的商品集合
 	var satisfyGoodsList []Product
 
+	// 符合自己条件的商品集合
+	var satisfyGoodsListBySelf []Product
+
 	page := 0
 	for {
 
 		var productList = []Product{}
-		if len(globalConf.KeyWords) > 0 {
-			for _, word := range globalConf.KeyWords {
-				products := GetGoods(page, word).Data.Rows
-				productList = append(productList, products...)
-			}
-		} else {
-			// Get the good list
-			productList = GetGoods(page, "").Data.Rows
-		}
+		// if len(globalConf.KeyWords) > 0 {
+		// 	for _, word := range globalConf.KeyWords {
+		// 		products := GetGoods(page, word).Data.Rows
+		// 		productList = append(productList, products...)
+		// 	}
+		// } else {
+		// 	// Get the good list
+		// 	productList = GetGoods(page, "").Data.Rows
+		// }
+
+		// Get the good list
+		productList = GetGoods(page, "").Data.Rows
 
 		// add satisfy good
 		if len(productList) > 0 {
@@ -112,10 +118,13 @@ func GetSatisfiedGoods(conf file.Config) []Product {
 
 	fmt.Println("结束爬取符合条件商品。。")
 
+	//过滤出自己的商品
+	satisfyGoodsListBySelf = filterMyselfProduct(satisfyGoodsList)
+
 	// 保存推送商品，去重使用
 	savePushed(pushedMap, pushedPath, satisfyGoodsList)
 
-	return satisfyGoodsList
+	return satisfyGoodsList, satisfyGoodsListBySelf
 }
 
 // GetGoods 获取商品集合
@@ -237,4 +246,21 @@ func savePushed(pushedMap map[string]interface{}, pushedPath string, satisfyGood
 		tempMap[value.ArticleId] = index
 	}
 	file.WritePushedInfo(tempMap, pushedMap, pushedPath)
+}
+
+// 过滤自己的商品
+func filterMyselfProduct(satisfyGoodsList []Product) []Product {
+
+	var satisfyGoodsListBySelf []Product
+
+	for _, value := range satisfyGoodsList {
+		for _, word := range globalConf.KeyWords {
+			if strings.Contains(value.ArticleTitle, word) {
+				fmt.Printf("appear myself satisfy good: %#v", value)
+				satisfyGoodsListBySelf = append(satisfyGoodsListBySelf, value)
+			}
+		}
+	}
+	return satisfyGoodsListBySelf
+
 }

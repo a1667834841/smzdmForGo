@@ -13,6 +13,7 @@
 - [x] 设定关键字，爬取含关键词的商品
 - [x] 利用github Action 自动编译，部署到个人服务器
 - [x] 每天定时打卡
+- [x] 可通过手机号@指定人
   
 ### 待实现
 - [ ] 配置server酱
@@ -81,6 +82,7 @@ go run .\main.go .\route.go
 
 
 ### 效果
+![20231024210905](https://img.ggball.top/picGo/20231024210905.png)
 ![image-20220419205742369](https://img.ggball.top/picGo/image-20220419205742369.png)
 
 ![image-20220419205914792](https://img.ggball.top/picGo/image-20220419205914792.png)
