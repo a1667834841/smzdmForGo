@@ -16,6 +16,7 @@ import (
 
 var conf = file.Config{}
 var checks = []file.CheckInfo{}
+var userDbPath = "data/users.db"
 
 func main() {
 
@@ -45,7 +46,11 @@ func cronForCheckIn() {
 
 	c := cron.New()
 	c.AddFunc(conf.Cron, func() {
-		check_in.Run(conf, checks)
+		chekIn, err := check_in.NewCheckIn(userDbPath)
+		if err != nil {
+			log.Fatal("Failed to initialize check-in service:", err)
+		}
+		chekIn.CheckInAllUsers()
 	})
 	c.Start()
 }
@@ -67,7 +72,7 @@ func requestSmzdm() {
 
 func init() {
 
-	// 读取配置文件
+	// 读取项目根目录的配置文件
 	conf = file.ReadConf("")
 	checks = file.ReadCheckInfoJsonToCheck()
 

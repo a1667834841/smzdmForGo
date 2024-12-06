@@ -2,6 +2,8 @@ module ggball.com/smzdm
 
 go 1.18
 
+require github.com/mattn/go-sqlite3 v1.14.24
+
 require (
 	github.com/fsnotify/fsnotify v1.5.1 // indirect
 	github.com/go-telegram-bot-api/telegram-bot-api/v5 v5.5.1 // indirect

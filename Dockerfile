@@ -8,3 +8,8 @@ COPY . /opt/go/
 RUN cd /opt/go
 RUN go build -o smzdmPusher
 CMD ./smzdmPusher
+
+RUN apk add --no-cache gcc musl-dev sqlite-dev
+
+RUN mkdir -p /data
+VOLUME /data

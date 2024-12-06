@@ -4,51 +4,93 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"reflect"
 	"strconv"
 
 	"ggball.com/smzdm/file"
 	"ggball.com/smzdm/push"
+	"ggball.com/smzdm/db"
 )
 
-func Run(conf file.Config, checks []file.CheckInfo) {
+type CheckIn struct {
+	db       *db.DB
+	conf     file.Config
+	checks   []file.CheckInfo
+}
 
-	for _, check := range checks {
-		client := &http.Client{}
-		//生成要访问的url
-		url := "https://zhiyou.smzdm.com/user/checkin/jsonp_checkin"
-		//提交请求
-		reqest, err := http.NewRequest("GET", url, nil)
+func NewCheckIn(dbPath string) (*CheckIn, error) {
+	database, err := db.NewDB(dbPath)
+	if err != nil {
+		return nil, err
+	}
+	
+	if err := database.InitTables(); err != nil {
+		return nil, err
+	}
 
-		//增加header选项
-		reqest.Header.Add("Cookie", check.Cookie)
-		reqest.Header.Add("Host", "zhiyou.smzdm.com")
-		reqest.Header.Add("Referer", "https://www.smzdm.com/")
+	return &CheckIn{
+		db: database,
+		// 初始化其他字段...
+	}, nil
+}
 
-		if err != nil {
-			panic(err)
+func (c *CheckIn) CheckInAllUsers() error {
+	users, err := c.db.GetAllUsers()
+	if err != nil {
+		return err
+	}
+
+	for _, user := range users {
+		// 使用用户信息执行签到
+		// 根据具体平台执行不同的签到逻辑
+		if msg, err := c.doCheckIn(user); err != nil {
+			log.Printf("Failed to check in for user %s: %v,msg:%s", user.Name, err,msg)
 		}
-		//处理返回结果
-		response, _ := client.Do(reqest)
-		defer response.Body.Close()
+	}
+	return nil
+}
 
-		// 将json转为map
-		resMap := TransResToMap(response)
+func (c *CheckIn) doCheckIn(user db.User) (string, error) {
+	client := &http.Client{}
+	url := "https://zhiyou.smzdm.com/user/checkin/jsonp_checkin"
+	
+	reqest, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return "请求失败", err
+	}
 
-		returnText := returnResult(resMap)
+	reqest.Header.Add("Cookie", user.Token)
+	reqest.Header.Add("Host", "zhiyou.smzdm.com")
+	reqest.Header.Add("Referer", "https://www.smzdm.com/")
 
-		// 推送
-		push.PushTextWithDingDing(returnText, conf)
+	response, err := client.Do(reqest)
+	if err != nil {
+		return "请求失败", err
+	}
+	defer response.Body.Close()
 
-		// 修改用戶最近一次签到结果
-		resultCode := ""
-		if resMap["error_code"] == float64(0) {
-			resultCode = "success"
-		} else {
-			resultCode = "faild"
-		}
-		file.UpdateCheckInfoById(check.Id, resultCode, returnText)
+	resMap := TransResToMap(response)
+	returnText := returnResult(resMap)
+	log.Println(returnText)
+
+	// 推送结果
+	push.PushTextWithDingDing(returnText, c.conf)
+
+	return returnText,nil
+}
+
+func (c *CheckIn) SetConfig(conf file.Config, checks []file.CheckInfo) error {
+	c.conf = conf
+	c.checks = checks
+	return nil
+}
+
+func (c *CheckIn) Run() {
+	// 先执行数据库中的用户签到
+	if err := c.CheckInAllUsers(); err != nil {
+		log.Printf("Failed to check in for database users: %v", err)
 	}
 
 }
@@ -62,7 +104,7 @@ func returnResult(resMap map[string]interface{}) string {
 	errorCode := resMap["error_code"]
 
 	if float64(0) == errorCode {
-		// 连续签到天数
+		// 连续到天数
 		data := resMap["data"].(map[string]interface{})
 		continueCheckinDays := data["continue_checkin_days"]
 

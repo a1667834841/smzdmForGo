@@ -8,8 +8,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-
-	"ggball.com/smzdm/check_in"
 	"ggball.com/smzdm/file"
 )
 
@@ -68,10 +66,10 @@ func CheckInHandler(w http.ResponseWriter, r *http.Request) {
 	body, _ := ioutil.ReadAll(r.Body)
 	checkInfo := deserializeJson(string(body))[0]
 	fmt.Println("checkInfo:", checkInfo)
-	conf = file.Config{}
+	conf := file.Config{}
 	conf.DingdingToken = "9e4044952fe5c599afed3815ccaa387c650fd07bda96512648acfceb1b202ada"
 
-	check_in.Run(conf, []file.CheckInfo{checkInfo})
+	//TODO 签到
 	w.Header().Set("Content-Type", "application/json")
 	w.Write([]byte(wrapDataWithResult("\"" + "签到结束！" + "\"")))
 

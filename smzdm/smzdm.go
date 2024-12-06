@@ -45,7 +45,8 @@ var pushedPath = "./pushed.json"
 
 // 获取商品
 //
-//	@return []product
+//	@return []product 符合条件的商品集合
+//	@return []product 符合自己条件的商品集合
 func GetSatisfiedGoods(conf file.Config) ([]Product, []Product) {
 	globalConf = conf
 	fmt.Println("开始爬取符合条件商品。。")
@@ -63,16 +64,6 @@ func GetSatisfiedGoods(conf file.Config) ([]Product, []Product) {
 	for {
 
 		var productList = []Product{}
-		// if len(globalConf.KeyWords) > 0 {
-		// 	for _, word := range globalConf.KeyWords {
-		// 		products := GetGoods(page, word).Data.Rows
-		// 		productList = append(productList, products...)
-		// 	}
-		// } else {
-		// 	// Get the good list
-		// 	productList = GetGoods(page, "").Data.Rows
-		// }
-
 		// Get the good list
 		productList = GetGoods(page, "").Data.Rows
 

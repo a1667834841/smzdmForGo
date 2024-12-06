@@ -41,7 +41,22 @@ type CheckInfo struct {
 func ReadPusedInfo(path string) map[string]interface{} {
 	jsonFile, err := os.Open(path)
 	if err != nil {
-		panic(err)
+		// 如果文件不存在则创建
+		if os.IsNotExist(err) {
+			jsonFile, err = os.Create(path)
+			if err != nil {
+				panic(err)
+			}
+			// 写入空的json对象
+			_, err = jsonFile.Write([]byte("{}"))
+			if err != nil {
+				panic(err)
+			}
+			// 将文件指针移到开头
+			jsonFile.Seek(0, 0)
+		} else {
+			panic(err)
+		}
 	}
 	defer jsonFile.Close()
 
@@ -61,6 +76,13 @@ func ReadPusedInfo(path string) map[string]interface{} {
 func WritePushedInfo(temp map[string]interface{}, pushed map[string]interface{}, path string) {
 	for key, value := range temp {
 		pushed[key] = value
+	}
+
+	// 长度大于5000 则删除头部的1000个数据
+	if len(pushed) > 5000 {
+		for i := 0; i < 1000; i++ {
+			delete(pushed, fmt.Sprintf("%d", i))
+		}
 	}
 
 	// json 序列化map
@@ -131,9 +153,7 @@ func ReadConf(pwd string) Config {
 	cnf := Config{}
 	c := &cnf
 	v := viper.New()
-	v.SetConfigName("config")       //这里就是上面我们配置的文件名称，不需要带后缀名
-	v.AddConfigPath(wd + "/config") //文件所在的目录路径
-	v.SetConfigType("yml")          //这里是文件格式类型
+	v.SetConfigFile(wd + "\\config\\config.yml") // 直接指定配置文件的完整路径
 
 	err = v.ReadInConfig()
 	if err != nil {
