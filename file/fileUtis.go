@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"path/filepath"
 	"sync"
 	"time"
 
@@ -153,7 +154,10 @@ func ReadConf(pwd string) Config {
 	cnf := Config{}
 	c := &cnf
 	v := viper.New()
-	v.SetConfigFile(wd + "\\config\\config.yml") // 直接指定配置文件的完整路径
+	// 拼接路径
+
+	path := filepath.Join(wd, "config", "config.yml")
+	v.SetConfigFile(path) // 直接指定配置文件的完整路径
 
 	err = v.ReadInConfig()
 	if err != nil {
